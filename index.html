@@ -6,7 +6,7 @@
   <title>Micro QR Reader (zxing-wasm 3.0.3 iife)</title>
   <style>
     video { width: 100%; 
-            
+            max-widht: 1000px;
           }
   </style>
 </head>
@@ -15,12 +15,13 @@
 
   <button id="startBtn">カメラ開始</button>
   <button id="scanBtn" disabled>1回スキャン</button>
+  <div id="result">結果: まだ読み取っていません</div>
   <div>  
     <video id="video" playsinline></video>
     <canvas id="canvas" style="display:none;"></canvas>
   </div>
 
-  <div id="result">結果: まだ読み取っていません</div>
+  
 
   <!-- ★ IIFE 版を読み込む -->
   <script src="https://cdn.jsdelivr.net/npm/zxing-wasm@3.0.3/dist/iife/reader/index.min.js"></script>
