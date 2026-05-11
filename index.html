@@ -2,42 +2,27 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>Micro QR Reader (zxing-wasm)</title>
+  <title>Micro QR Reader (zxing-wasm 3.0.3 iife)</title>
   <style>
-    body { font-family: sans-serif; }
-    video, canvas { width: 100%; max-width: 400px; }
-    #result { margin-top: 1em; font-weight: bold; }
+    video { width: 100%; max-width: 400px; }
   </style>
 </head>
 <body>
-  <h1>Micro QR 読み取りデモ (zxing-wasm)</h1>
+  <h1>Micro QR 読み取り（3.0.3 iife）</h1>
 
   <button id="startBtn">カメラ開始</button>
   <button id="scanBtn" disabled>1回スキャン</button>
 
-  <div>
-    <video id="video" playsinline></video>
-    <canvas id="canvas" style="display:none;"></canvas>
-  </div>
+  <video id="video" playsinline></video>
+  <canvas id="canvas" style="display:none;"></canvas>
 
   <div id="result">結果: まだ読み取っていません</div>
 
-  <script type="module">
-    import {
-      readBarcodesFromImageData,
-      getZXingModule,
-      setZXingModuleOverrides
-    } from "https://cdn.jsdelivr.net/npm/zxing-wasm@3.0.2/+esm";
+  <!-- ★ IIFE 版を読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/zxing-wasm@3.0.3/dist/iife/reader/index.min.js"></script>
 
-    // wasm の取得先を自前ホストに変えたい場合はここを変更
-    setZXingModuleOverrides({
-      locateFile: (path) => {
-        // 例: 自サーバーに配置した場合
-        // return "/wasm/reader/" + path;
-        // 今回は CDN のまま使うのでデフォルトに任せる
-        return `https://cdn.jsdelivr.net/npm/zxing-wasm@3.0.2/${path}`;
-      }
-    });
+  <script>
+    const { readBarcodesFromImageData, getZXingModule } = ZXingWASM;
 
     const startBtn = document.getElementById("startBtn");
     const scanBtn  = document.getElementById("scanBtn");
@@ -47,71 +32,40 @@
 
     let stream = null;
 
-    // 事前に wasm をロードしておく（初回の待ち時間を減らす）
-    getZXingModule().then(() => {
-      console.log("zxing-wasm ready");
-    });
+    getZXingModule().then(() => console.log("ZXing ready"));
 
-    // カメラ開始
     startBtn.addEventListener("click", async () => {
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: "environment" // スマホ背面カメラ優先
-          },
-          audio: false
-        });
-        video.srcObject = stream;
-        await video.play();
-        scanBtn.disabled = false;
-      } catch (err) {
-        console.error(err);
-        alert("カメラが利用できません: " + err.message);
-      }
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "environment" }
+      });
+      video.srcObject = stream;
+      await video.play();
+      scanBtn.disabled = false;
     });
 
-    // 1回だけスキャンするボタン
     scanBtn.addEventListener("click", async () => {
-      if (!video.videoWidth || !video.videoHeight) {
-        alert("動画の準備中です。少し待ってから再度お試しください。");
-        return;
-      }
-
-      // video のフレームを canvas に描画
       const w = video.videoWidth;
       const h = video.videoHeight;
+
       canvas.width = w;
       canvas.height = h;
+
       const ctx = canvas.getContext("2d");
       ctx.drawImage(video, 0, 0, w, h);
 
       const imageData = ctx.getImageData(0, 0, w, h);
 
-      try {
-        const results = await readBarcodesFromImageData(imageData, {
-          // Micro QR に絞る
-          formats: ["MicroQRCode"]
-        });
+      const results = await readBarcodesFromImageData(imageData, {
+        formats: ["MicroQRCode"]
+      });
 
-        if (results.length === 0) {
-          resultEl.textContent = "結果: 読み取れませんでした";
-        } else {
-          const r = results[0];
-          resultEl.textContent =
-            `結果: ${r.text} (format: ${r.format}, symbology: ${r.symbology})`;
-        }
-      } catch (e) {
-        console.error(e);
-        resultEl.textContent = "エラー: " + e;
-      }
-    });
-
-    // ページ離脱時にカメラ停止
-    window.addEventListener("beforeunload", () => {
-      if (stream) {
-        stream.getTracks().forEach(t => t.stop());
+      if (results.length === 0) {
+        resultEl.textContent = "結果: 読み取れませんでした";
+      } else {
+        resultEl.textContent = "結果: " + results[0].text;
       }
     });
   </script>
 </body>
 </html>
+
