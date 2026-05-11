@@ -27,7 +27,7 @@
       readBarcodesFromImageData,
       getZXingModule,
       setZXingModuleOverrides
-    } from "https://cdn.jsdelivr.net/npm/zxing-wasm@3.0.3/+esm";
+    } from "https://cdn.jsdelivr.net/npm/zxing-wasm@3.0.2/+esm";
 
     // wasm の取得先を自前ホストに変えたい場合はここを変更
     setZXingModuleOverrides({
@@ -35,7 +35,7 @@
         // 例: 自サーバーに配置した場合
         // return "/wasm/reader/" + path;
         // 今回は CDN のまま使うのでデフォルトに任せる
-        return `https://cdn.jsdelivr.net/npm/zxing-wasm@3.0.3/${path}`;
+        return `https://cdn.jsdelivr.net/npm/zxing-wasm@3.0.2/${path}`;
       }
     });
 
