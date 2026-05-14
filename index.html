@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Micro QR Reader (zxing-wasm 3.0.3 iife)</title>
+  <title>Image Scanner (zxing-wasm 3.0.3 iife)</title>
   <style>
     body {
         font-family: sans-serif;
@@ -44,17 +44,19 @@
   </style>
 </head>
 <body>
-  <h1>Micro QR 読み取り（3.0.3 iife）</h1>
-  <div class = "button-container">
-    <button id="startBtn">カメラ開始</button>
-    <button id="scanBtn" disabled>1回スキャン</button>
-  </div>
+  <h1>イメージスキャナー</h1>
+  <button id="startBtn">カメラ開始</button>
+
   <div id="result">結果: まだ読み取っていません</div>
   <div>  
     <video id="video" playsinline></video>
     <canvas id="canvas" style="display:none;"></canvas>
   </div>
-
+　<div class = "button-container">
+    <button id="scanBtn" disabled>1回スキャン</button>
+    <button id="searchBtn" disabled>探す</button>
+  </div>
+  
   
 
   <!-- ★ IIFE 版を読み込む -->
