@@ -95,7 +95,7 @@
       const imageData = ctx.getImageData(0, 0, w, h);
 
       const results = await readBarcodesFromImageData(imageData, {
-        formats: ["MicroQRCode", "Codabar", "ITF"]
+        formats: ["MicroQRCode", "Codabar", "ITF", "QRCode"]
       });
 
       if (results.length === 0) {
