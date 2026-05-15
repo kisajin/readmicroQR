@@ -104,7 +104,8 @@
       searchBtn.disabled = false;
       const target = document.getElementById("camera-area");
       target.classList.toggle("visible"); // クラスを切り替え
-      continuousScan()
+      scanning = true;
+      continuousScan();
     });
 
     // // 1回スキャンして targetCode を登録
