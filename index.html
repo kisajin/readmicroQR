@@ -149,11 +149,14 @@
     //   searchBtn.disabled = false;
     // }
 
-    // ★ 読み取ったコードを保持（重複なし）
+    // ★ 読み取ったコード（重複なし）
     const scannedCodes = new Set();
     
-    // ★ 読み取ったコードの枠を保持（毎フレーム描画用）
-    const scannedBoxes = new Map();   // key: text, value: position
+    // ★ 読み取ったコードの枠
+    const scannedBoxes = new Map(); // text → position
+    
+    // ★ 読み取りが完了したかどうか
+    let allFound = false;
     
     // ★ 連続スキャン
     async function continuousScan() {
@@ -168,32 +171,38 @@
       const ctx = canvas.getContext("2d");
       ctx.drawImage(video, 0, 0, w, h);
     
-      const imageData = ctx.getImageData(0, 0, w, h);
+      // ★ 読み取りが完了していない時だけスキャンする
+      if (!allFound) {
+        const imageData = ctx.getImageData(0, 0, w, h);
     
-      // ★ 複数コードを読み取る
-      const results = await readBarcodesFromImageData(imageData, {
-        formats: ["MicroQRCode", "Codabar", "ITF", "QRCode"]
-      });
+        const results = await readBarcodesFromImageData(imageData, {
+          formats: ["MicroQRCode"]
+        });
     
-      if (results.length > 0) {
-        for (const r of results) {
-          const text = r.text;
+        if (results.length > 0) {
+          for (const r of results) {
+            const text = r.text;
     
-          // ★ 新規コードなら保存（重複なし）
-          if (!scannedCodes.has(text)) {
-            scannedCodes.add(text);
+            if (!scannedCodes.has(text)) {
+              scannedCodes.add(text);
     
-            // ★ 枠情報を保存（毎フレーム描画するため）
-            if (r.position) {
-              scannedBoxes.set(text, r.position);
+              if (r.position) {
+                scannedBoxes.set(text, r.position);
+              }
+    
+              console.log("新規コード:", text);
             }
-    
-            console.log("新規コード:", text);
           }
+        }
+    
+        // ★ ここで「全部読み取れたか」を判定
+        if (scannedCodes.size >= TOTAL_SYMBOLS) {
+          allFound = true;
+          console.log("すべて読み取り完了");
         }
       }
     
-      // ★ 読み取ったすべてのコードの枠を毎フレーム描画
+      // ★ 読み取り完了後も赤枠を毎フレーム描く
       drawAllBoxes(ctx);
     
       // ★ 状態表示
@@ -203,7 +212,7 @@
       requestAnimationFrame(continuousScan);
     }
     
-    // ★ 読み取ったすべての枠を描画（毎フレーム呼ばれる）
+    // ★ 読み取ったすべての枠を描画
     function drawAllBoxes(ctx) {
       ctx.strokeStyle = "red";
       ctx.lineWidth = 6;
