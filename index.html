@@ -108,57 +108,14 @@
       continuousScan();
     });
 
-    // // 1回スキャンして targetCode を登録
-    // scanBtn.addEventListener("click", async () => {
-    //   stopRequested = false;
-    //   scanUntilFound();
-    //   stopBtn.disabled = false;
-    // });
-
-    // async function scanUntilFound() {
-    //   if (stopRequested) return;   // ★ 停止要求があれば終了
-      
-    //   const w = video.videoWidth;
-    //   const h = video.videoHeight;
     
-    //   canvas.width = w;
-    //   canvas.height = h;
     
-    //   const ctx = canvas.getContext("2d");
-    //   ctx.drawImage(video, 0, 0, w, h);
-    
-    //   const imageData = ctx.getImageData(0, 0, w, h);
-    
-    //   const results = await readBarcodesFromImageData(imageData, {
-    //     formats: ["MicroQRCode", "Codabar", "ITF", "QRCode"]
-    //   });
-    
-    //   if (results.length === 0) {
-    //     resultEl.textContent = "結果: 見つかりません…再スキャン中";
-    
-    //     // ★ 停止要求がなければ、100ms 後に再スキャン（再帰）
-    //     if (!stopRequested) {
-    //       setTimeout(scanUntilFound, 100);
-    //     }
-    //     return;
-    //   }
-    
-    //   // ★ 見つかった！
-    //   targetCode = results[0].text;
-    //   resultEl.textContent = "登録: " + targetCode;
-    //   searchBtn.disabled = false;
-    // }
-
     // ★ 読み取ったコード（重複なし）
     const scannedCodes = new Set();
     
-    // ★ 読み取ったコードの枠
+    // ★ 読み取ったコードの枠（毎フレーム描画用）
     const scannedBoxes = new Map(); // text → position
     
-    // ★ 読み取りが完了したかどうか
-    let allFound = false;
-    
-    // ★ 連続スキャン
     async function continuousScan() {
       if (!scanning || stopRequested) return;
     
@@ -171,38 +128,31 @@
       const ctx = canvas.getContext("2d");
       ctx.drawImage(video, 0, 0, w, h);
     
-      // ★ 読み取りが完了していない時だけスキャンする
-      if (!allFound) {
-        const imageData = ctx.getImageData(0, 0, w, h);
+      const imageData = ctx.getImageData(0, 0, w, h);
     
-        const results = await readBarcodesFromImageData(imageData, {
-          formats: ["MicroQRCode"]
-        });
+      // ★ 毎フレームスキャン（重複は Set が防ぐ）
+      const results = await readBarcodesFromImageData(imageData, {
+        formats: ["MicroQRCode"]
+      });
     
-        if (results.length > 0) {
-          for (const r of results) {
-            const text = r.text;
+      if (results.length > 0) {
+        for (const r of results) {
+          const text = r.text;
     
-            if (!scannedCodes.has(text)) {
-              scannedCodes.add(text);
+          // ★ 新規コードだけ追加
+          if (!scannedCodes.has(text)) {
+            scannedCodes.add(text);
     
-              if (r.position) {
-                scannedBoxes.set(text, r.position);
-              }
-    
-              console.log("新規コード:", text);
+            if (r.position) {
+              scannedBoxes.set(text, r.position);
             }
-          }
-        }
     
-        // ★ ここで「全部読み取れたか」を判定
-        if (scannedCodes.size >= TOTAL_SYMBOLS) {
-          allFound = true;
-          console.log("すべて読み取り完了");
+            console.log("新規コード:", text);
+          }
         }
       }
     
-      // ★ 読み取り完了後も赤枠を毎フレーム描く
+      // ★ 読み取ったすべての枠を毎フレーム描画
       drawAllBoxes(ctx);
     
       // ★ 状態表示
@@ -212,7 +162,7 @@
       requestAnimationFrame(continuousScan);
     }
     
-    // ★ 読み取ったすべての枠を描画
+    // ★ 読み取った枠を毎フレーム描画
     function drawAllBoxes(ctx) {
       ctx.strokeStyle = "red";
       ctx.lineWidth = 6;
