@@ -283,6 +283,9 @@
     restartBtn.addEventListener("click", () => {
       stopRequested = false;
       scanning = true;
+      scannedCodes.clear();
+      scannedBoxes.clear();
+      
       continuousScan();
     });
 
