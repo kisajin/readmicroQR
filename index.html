@@ -56,7 +56,7 @@
 </head>
 <body>
   <h1>一括読み取りアプリ</h1>
-  <button id="startBtn">カメラ開始</button>
+  
 
   <div id="result">結果: まだ読み取っていません</div>
 
@@ -64,11 +64,13 @@
     <video id="video" playsinline></video>
     <canvas id="canvas"></canvas>
   </div>
-  
+
+
   <div class="button-container">
-    <button id="scanBtn" disabled>1回スキャン（登録）</button>
-    <button id="searchBtn" disabled>探す（連続スキャン）</button>
-    <button id="stopBtn" disabled>停止</button>
+    <button id="startBtn">カメラ開始</button>
+    <button id="scanBtn" hidden>1回スキャン（登録）</button>
+    <button id="searchBtn" hidden>探す（連続スキャン）</button>
+    <button id="stopBtn">停止</button>
   </div>
 
   <!-- ZXing WASM -->
@@ -80,6 +82,7 @@
     const startBtn = document.getElementById("startBtn");
     const scanBtn  = document.getElementById("scanBtn");
     const searchBtn = document.getElementById("searchBtn");
+    const stopBtn = document.getElementById("stopBtn");
     const video    = document.getElementById("video");
     const canvas   = document.getElementById("canvas");
     const resultEl = document.getElementById("result");
