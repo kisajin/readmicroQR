@@ -172,7 +172,7 @@
       ctx.drawImage(video, 0, 0, w, h);
     
       // ★ 読み取りが完了していない時だけスキャンする
-      if (!allFound) {
+      // if (!allFound) {
         const imageData = ctx.getImageData(0, 0, w, h);
     
         const results = await readBarcodesFromImageData(imageData, {
@@ -200,7 +200,7 @@
           allFound = true;
           console.log("すべて読み取り完了");
         }
-      }
+      //}
     
       // ★ 読み取り完了後も赤枠を毎フレーム描く
       drawAllBoxes(ctx);
