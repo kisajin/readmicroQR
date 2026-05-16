@@ -166,9 +166,21 @@
               ctx.lineTo(box.bottomLeft.x, box.bottomLeft.y);
               ctx.closePath();
               ctx.stroke();
+
+              // ★ 枠の下にテキストを描く
+              ctx.font = "24px sans-serif";
+              ctx.fillStyle = "yellow";
+              ctx.fillText(r.text, box.topLeft.x, box.bottomLeft.y + 30);
+              
             } else {
               // ZXing が枠を返さないフォーマット用（ITF / Codabar）
               ctx.strokeRect(w * 0.2, h * 0.2, w * 0.6, h * 0.6);
+
+              // 中央枠の下にテキストを描く
+              ctx.font = "24px sans-serif";
+              ctx.fillStyle = "yellow";
+              ctx.fillText(r.text, w * 0.2, h * 0.2 + (h * 0.6) + 30);
+              
             }
           }
           
