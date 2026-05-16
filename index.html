@@ -137,28 +137,21 @@
         formats: ["MicroQRCode"]
       });
       
-      // ★ 毎フレーム scannedBoxes をクリアして更新
-      scannedBoxes.clear();
       
+      // ★ scannedBoxes を毎フレーム消さない（ここが重要）
       if (results.length > 0) {
         for (const r of results) {
           const text = r.text;
     
-          // ★ 新規コードだけ追加
-          if (!scannedCodes.has(text)) {
-            scannedCodes.add(text);
-          }
-          
-          // 新規コードでなくても毎フレーム描画する
+          // 新規コードなら Set に追加
+          scannedCodes.add(text);
+    
+          // ★ 新規コードでなくても毎フレーム位置を更新
           if (r.position) {
             scannedBoxes.set(text, r.position);
           }
-    
-            console.log("新規コード:", text);
-          
         }
       }
-    
       // ★ 読み取ったすべての枠を毎フレーム描画
       drawAllBoxes(ctx);
     
