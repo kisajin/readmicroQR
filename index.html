@@ -57,7 +57,7 @@
 <body>
   <h1>一括読み取りアプリ</h1>
   
-
+  <button id="startBtn">カメラ開始</button>
   <div id="result">結果: まだ読み取っていません</div>
 
   <div id="camera-area" class="hidden" style="position: relative; width:100%; max-width:800px;">
@@ -67,10 +67,10 @@
 
 
   <div class="button-container">
-    <button id="startBtn">カメラ開始</button>
-    <button id="scanBtn" hidden>1回スキャン（登録）</button>
-    <button id="searchBtn" hidden>探す（連続スキャン）</button>
     <button id="stopBtn">停止</button>
+    <button id="restartBtn">再開</button>
+    <button id="searchBtn" hidden>探す（連続スキャン）</button>
+    
   </div>
 
   <!-- ZXing WASM -->
@@ -80,9 +80,10 @@
     const { readBarcodesFromImageData, getZXingModule } = ZXingWASM;
 
     const startBtn = document.getElementById("startBtn");
-    const scanBtn  = document.getElementById("scanBtn");
-    const searchBtn = document.getElementById("searchBtn");
     const stopBtn = document.getElementById("stopBtn");
+    const restartBtn  = document.getElementById("restartBtn");
+    const searchBtn = document.getElementById("searchBtn");
+    
     const video    = document.getElementById("video");
     const canvas   = document.getElementById("canvas");
     const resultEl = document.getElementById("result");
@@ -183,6 +184,8 @@
 
               // 中央枠の下にテキストを描く
               ctx.font = "24px sans-serif";
+              ctx.strokeStyle = "black";
+              ctx.strokeText(r.text, w * 0.2, h * 0.2 + (h * 0.6) + 30);
               ctx.fillStyle = "yellow";
               ctx.fillText(r.text, w * 0.2, h * 0.2 + (h * 0.6) + 30);
               
@@ -276,20 +279,8 @@
     //   requestAnimationFrame(continuousScan);
     // }
 
-    // 探す（連続スキャン開始）
-    searchBtn.addEventListener("click", () => {
-      // if (!targetCode) {
-      //   alert("先にスキャンして登録してください");
-      //   return;
-      // }
-
-      // stopRequested = false;
-      // searchMode = true;
-      // scanning = true;
-      // stopBtn.disabled = false;
-      
-      // resultEl.textContent = "探しています: " + targetCode;
-
+    //　再開
+    restartBtn.addEventListener("click", () => {
       continuousScan();
     });
 
