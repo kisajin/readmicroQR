@@ -172,6 +172,8 @@
 
               // ★ 枠の下にテキストを描く
               ctx.font = "24px sans-serif";
+              ctx.strokeStyle = "black";
+              ctx.strokeText(r.text, box.topLeft.x, box.bottomLeft.y + 30);
               ctx.fillStyle = "yellow";
               ctx.fillText(r.text, box.topLeft.x, box.bottomLeft.y + 30);
               
