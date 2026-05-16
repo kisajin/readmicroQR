@@ -281,6 +281,8 @@
 
     //　再開
     restartBtn.addEventListener("click", () => {
+      stopRequested = false;
+      scanning = true;
       continuousScan();
     });
 
