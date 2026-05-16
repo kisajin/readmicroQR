@@ -129,7 +129,8 @@
       // ★ 再描画させるためにcanvas をクリア
       ctx.clearRect(0, 0, w, h);
       ctx.drawImage(video, 0, 0, w, h);
-    
+      
+      
       const imageData = ctx.getImageData(0, 0, w, h);
     
       // ★ 毎フレームスキャン（重複は Set が防ぐ）
@@ -147,13 +148,34 @@
           scannedCodes.add(text);
     
           // ★ 新規コードでなくても毎フレーム位置を更新
+          highlightBox = r.position || "center";
           if (r.position) {
-            scannedBoxes.set(text, r.position);
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 6;
+
+            //scannedBoxes.set(text, r.position);
+
+            if (highlightBox !== "center") {
+              const box = highlightBox;
+            
+              // ZXing が枠を返した場合
+              ctx.beginPath();
+              ctx.moveTo(box.topLeft.x, box.topLeft.y);
+              ctx.lineTo(box.topRight.x, box.topRight.y);
+              ctx.lineTo(box.bottomRight.x, box.bottomRight.y);
+              ctx.lineTo(box.bottomLeft.x, box.bottomLeft.y);
+              ctx.closePath();
+              ctx.stroke();
+            } else {
+              // ZXing が枠を返さないフォーマット用（ITF / Codabar）
+              ctx.strokeRect(w * 0.2, h * 0.2, w * 0.6, h * 0.6);
+            }
           }
+          
         }
       }
       // ★ 読み取ったすべての枠を毎フレーム描画
-      drawAllBoxes(ctx);
+      //drawAllBoxes(ctx);
     
       // ★ 状態表示
       resultEl.textContent =
@@ -164,8 +186,7 @@
     
     // ★ 読み取った枠を毎フレーム描画
     function drawAllBoxes(ctx) {
-      ctx.strokeStyle = "red";
-      ctx.lineWidth = 6;
+
     
       for (const [text, box] of scannedBoxes.entries()) {
         if (!box) continue;
