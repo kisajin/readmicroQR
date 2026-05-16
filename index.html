@@ -136,7 +136,10 @@
       const results = await readBarcodesFromImageData(imageData, {
         formats: ["MicroQRCode"]
       });
-    
+      
+      // ★ 毎フレーム scannedBoxes をクリアして更新
+      scannedBoxes.clear();
+      
       if (results.length > 0) {
         for (const r of results) {
           const text = r.text;
