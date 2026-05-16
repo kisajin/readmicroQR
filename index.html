@@ -147,13 +147,15 @@
           // ★ 新規コードだけ追加
           if (!scannedCodes.has(text)) {
             scannedCodes.add(text);
-    
-            if (r.position) {
-              scannedBoxes.set(text, r.position);
-            }
+          }
+          
+          // 新規コードでなくても毎フレーム描画する
+          if (r.position) {
+            scannedBoxes.set(text, r.position);
+          }
     
             console.log("新規コード:", text);
-          }
+          
         }
       }
     
