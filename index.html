@@ -135,7 +135,7 @@
     
       // ★ 毎フレームスキャン（重複は Set が防ぐ）
       const results = await readBarcodesFromImageData(imageData, {
-        formats: ["MicroQRCode", "QRCode", "Codabar", "ITF"]
+        formats: ["MicroQRCode", "QRCode"]    // zxing-wasmはcodabarとITFの一括読み取りが苦手なので二次元コードのみ
       });
       
       
