@@ -121,7 +121,7 @@
     const scannedBoxes = new Map(); // text → position
     
     async function continuousScan() {
-      if (!scanning || stopRequested) return;
+      if ( stopRequested) return;
     
       const w = video.videoWidth;
       const h = video.videoHeight;
@@ -221,74 +221,6 @@
       }
     }
 
-    // // 連続スキャン関数
-    // async function continuousScan() {
-    //   if (!scanning || stopRequested) return;  // ★ 停止要求があれば終了
-
-    //   const w = video.videoWidth;
-    //   const h = video.videoHeight;
-
-    //   canvas.width = w;
-    //   canvas.height = h;
-
-    //   const ctx = canvas.getContext("2d");
-    //   ctx.drawImage(video, 0, 0, w, h);
-
-    //   const imageData = ctx.getImageData(0, 0, w, h);
-
-    //   const results = await readBarcodesFromImageData(imageData, {
-    //     formats: ["MicroQRCode", "Codabar", "ITF", "QRCode"]
-    //   });
-
-    //   if (results.length > 0) {
-    //     const code = results[0];
-    //     resultEl.textContent = "スキャン中: " + code.text;
-
-    //     // 一致したら赤枠
-    //     if (searchMode && code.text === targetCode) {
-
-    //       const box = code.position;
-
-    //       ctx.strokeStyle = "red";
-    //       ctx.lineWidth = 8;
-
-    //       if (box) {
-    //         // ZXing が枠を返した場合
-    //         ctx.beginPath();
-    //         ctx.moveTo(box.topLeft.x, box.topLeft.y);
-    //         ctx.lineTo(box.topRight.x, box.topRight.y);
-    //         ctx.lineTo(box.bottomRight.x, box.bottomRight.y);
-    //         ctx.lineTo(box.bottomLeft.x, box.bottomLeft.y);
-    //         ctx.closePath();
-    //         ctx.stroke();
-    //       } else {
-    //         // ZXing が枠を返さないフォーマット用（ITF / Codabar）
-    //         ctx.strokeRect(w * 0.2, h * 0.2, w * 0.6, h * 0.6);
-    //       }
-
-    //       resultEl.textContent = "一致!: " + targetCode;
-
-    //       //scanning = false;
-    //       //searchMode = false;
-    //       //return;
-    //     }
-    //   } else {
-    //     resultEl.textContent = "スキャン中...";
-    //   }
-
-    //   requestAnimationFrame(continuousScan);
-    // }
-
-    //　再開
-    restartBtn.addEventListener("click", () => {
-      stopRequested = false;
-      scanning = true;
-      scannedCodes.clear();
-      scannedBoxes.clear();
-      
-      continuousScan();
-    });
-
     // イメージの読取を停止させる
     stopBtn.addEventListener("click", () => {
       stopRequested = true;
@@ -301,6 +233,17 @@
       
       resultEl.textContent = "停止しました";
     });
+
+    //　読取の再開
+    restartBtn.addEventListener("click", () => {
+      stopRequested = false;
+      scanning = true;
+      scannedCodes.clear();
+      scannedBoxes.clear();
+      
+      continuousScan();
+    });
+
 
   </script>
 </body>
