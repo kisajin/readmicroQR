@@ -135,7 +135,7 @@
     
       // ★ 毎フレームスキャン（重複は Set が防ぐ）
       const results = await readBarcodesFromImageData(imageData, {
-        formats: ["MicroQRCode"]
+        formats: ["MicroQRCode", "QRCode", "Codabar", "ITF"]
       });
       
       
